@@ -36,7 +36,7 @@ const Login = () => {
       return console.log("All fields Required !");
     }
 
-    setLoading(true); // Set loading to true when the API call starts
+    setLoading(true); 
     try {
       const loginData = { email, password };
       const res = await userLogin(loginData);
@@ -52,7 +52,7 @@ const Login = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false); // Set loading to false when the API call completes
+      setLoading(false); 
     }
   };
 
@@ -63,9 +63,7 @@ const Login = () => {
       </div>
       <div className={styles.container}>
         <form onSubmit={handleLoginSubmit}>
-          {loading ? ( // Show loading indicator if loading is true
-            <div className={styles.loading}>Loading...</div>
-          ) : (
+
             <div className={styles.logindiv}>
               <div className={styles.email}>
                 <label style={errors.email && { color: "red" }}>Email</label>
@@ -114,7 +112,7 @@ const Login = () => {
                 </button>
               </div>
             </div>
-          )}
+          
           <div className={styles.register}>
             <p>
               Don't have an account?{" "}
