@@ -7,26 +7,21 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { userLogin } from "../api/userApis";
 import toast from "react-hot-toast";
-
 import { FcGoogle } from "react-icons/fc";
-
 
 const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // New loading state
 
-  // if user already login mot require to login again 
-  // via token directly naviagte to user workspace
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/workspace");
     }
   }, []);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
-
-  // validate user input 
   const validationInput = () => {
     const newError = {};
     if (!email.trim()) newError.email = "Email is required !";
@@ -35,18 +30,15 @@ const Login = () => {
     return Object.keys(newError).length === 0;
   };
 
-  // handle user Login
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (!validationInput()) {
       return console.log("All fields Required !");
     }
 
+    setLoading(true); // Set loading to true when the API call starts
     try {
-      const loginData = {
-        email: email,
-        password: password,
-      };
+      const loginData = { email, password };
       const res = await userLogin(loginData);
       const data = await res.json();
 
@@ -59,8 +51,11 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); // Set loading to false when the API call completes
     }
   };
+
   return (
     <>
       <div className={styles.BackArro}>
@@ -68,56 +63,58 @@ const Login = () => {
       </div>
       <div className={styles.container}>
         <form onSubmit={handleLoginSubmit}>
-          <div className={styles.logindiv}>
-            <div className={styles.email}>
-              <label style={errors.email && { color: "red" }}>Email</label>
-              <input
-                type="text"
-                placeholder="Enter your email"
-                onChange={(e) => setEmail(e.target.value)}
-                style={errors.email && { border: "1px solid red" }}
-              />
-              <p style={{ visibility: errors.email ? "visible" : "hidden" }}>
-                {errors.email || "Field Requires"}
-              </p>
+          {loading ? ( // Show loading indicator if loading is true
+            <div className={styles.loading}>Loading...</div>
+          ) : (
+            <div className={styles.logindiv}>
+              <div className={styles.email}>
+                <label style={errors.email && { color: "red" }}>Email</label>
+                <input
+                  type="text"
+                  placeholder="Enter your email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={errors.email && { border: "1px solid red" }}
+                />
+                <p style={{ visibility: errors.email ? "visible" : "hidden" }}>
+                  {errors.email || "Field Requires"}
+                </p>
+              </div>
+              <div>
+                <label style={errors.password && { color: "red" }}>Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={errors.password && { border: "1px solid red" }}
+                />
+                <p style={{ visibility: errors.password ? "visible" : "hidden" }}>
+                  {errors.password || "Field Requires"}
+                </p>
+              </div>
+              <div>
+                <button className={styles.loginButton} type="submit" disabled={loading}>
+                  {loading ? "Loading..." : "Log in"}
+                </button>
+              </div>
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: "15px",
+                  fontWeight: "200",
+                }}
+              >
+                OR
+              </div>
+              <div>
+                <button className={styles.loginButton}>
+                  <div>
+                    <FcGoogle size={30} />
+                  </div>
+                  Sign in with google
+                </button>
+              </div>
             </div>
-            <div>
-              <label style={errors.password && { color: "red" }}>
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter Password"
-                onChange={(e) => setPassword(e.target.value)}
-                style={errors.password && { border: "1px solid red" }}
-              />
-              <p style={{ visibility: errors.password ? "visible" : "hidden" }}>
-                {errors.password || "Field Requires"}
-              </p>
-            </div>
-            <div>
-              <button className={styles.loginButton} type="submit">
-                Log in
-              </button>
-            </div>
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "15px",
-                fontWeight: "200",
-              }}
-            >
-              OR
-            </div>
-            <div>
-              <button className={styles.loginButton}>
-                <div>
-                  <FcGoogle size={30} />
-                </div>
-                Sign in with google
-              </button>
-            </div>
-          </div>
+          )}
           <div className={styles.register}>
             <p>
               Don't have an account?{" "}

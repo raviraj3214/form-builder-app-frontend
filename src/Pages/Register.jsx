@@ -17,39 +17,43 @@ const Register = () => {
     password: "",
   });
   const [confirmPass, setConfirmPass] = useState("");
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // New loading state
 
-  const [errors, setErros] = useState({});
-
-  // validate Input Fields 
-  const validateFrom = () =>{
+  // Validate Input Fields
+  const validateForm = () => {
     const newError = {};
-    if(!formData.username.trim()) newError.username = "Username is Required !";
-    if(!formData.email.trim()) newError.email = "Email is Required !";
-    if(!formData.password.trim()) newError.password = "Password is Required !";
-    if(!confirmPass.trim()) newError.confirmPass = "Field Required !";
-    if(formData.password.trim() !== confirmPass) newError.confirmPass = "enter same password in both fields";
-    setErros(newError);
+    if (!formData.username.trim()) newError.username = "Username is Required!";
+    if (!formData.email.trim()) newError.email = "Email is Required!";
+    if (!formData.password.trim()) newError.password = "Password is Required!";
+    if (!confirmPass.trim()) newError.confirmPass = "Field Required!";
+    if (formData.password.trim() !== confirmPass) newError.confirmPass = "Enter same password in both fields";
+    setErrors(newError);
     return Object.keys(newError).length === 0;
-  }
+  };
 
-
-  // register new user 
+  // Register new user
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if(!validateFrom()){
+    if (!validateForm()) {
       return toast.error("All fields Required");
     }
+
+    setLoading(true); // Set loading to true when the API call starts
     try {
       const res = await registerUser(formData);
       const data = await res.json();
-      if(res.status == 200){
+      if (res.status === 200) {
         toast.success(data.message);
-      }else{
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); // Set loading to false when the API call completes
     }
+
     setFormData({
       username: "",
       email: "",
@@ -67,87 +71,86 @@ const Register = () => {
         <form onSubmit={handleFormSubmit}>
           <div className={styles.logindiv}>
             <div className={styles.email}>
-              <label style={errors.username && {color:"red"}}>Username</label>
+              <label style={errors.username && { color: "red" }}>Username</label>
               <input
                 type="text"
                 placeholder="Enter your username"
                 name="username"
                 value={formData.username}
-                style={ errors.username && {border:"1px solid red"}}
+                style={errors.username && { border: "1px solid red" }}
                 onChange={(e) =>
                   setFormData({ ...formData, [e.target.name]: e.target.value })
                 }
               />
-              <p style={{ visibility: errors.username ? "visible" : "hidden"}}>
+              <p style={{ visibility: errors.username ? "visible" : "hidden" }}>
                 {errors.username || "Field Requires"}
               </p>
             </div>
             <div className={styles.email}>
-              <label style={errors.email && {color:"red"}}>Email</label>
+              <label style={errors.email && { color: "red" }}>Email</label>
               <input
                 type="text"
                 placeholder="Enter your email"
                 name="email"
                 value={formData.email}
-                style={ errors.email && {border:"1px solid red"}}
+                style={errors.email && { border: "1px solid red" }}
                 onChange={(e) =>
                   setFormData({ ...formData, [e.target.name]: e.target.value })
                 }
               />
-              <p style={{visibility : errors.email ? "visible" : " hidden"}}>{ errors.email || "Field Required"}</p>
+              <p style={{ visibility: errors.email ? "visible" : "hidden" }}>
+                {errors.email || "Field Required"}
+              </p>
             </div>
             <div>
-              <label style={errors.password && {color:"red"}}>Password</label>
+              <label style={errors.password && { color: "red" }}>Password</label>
               <input
                 type="password"
                 placeholder="Enter Password"
                 name="password"
                 value={formData.password}
-                style={ errors.password && {border:"1px solid red"}}
+                style={errors.password && { border: "1px solid red" }}
                 onChange={(e) =>
                   setFormData({ ...formData, [e.target.name]: e.target.value })
                 }
               />
-              <p style={{visibility: errors.password ? "visible" : "hidden"}}>{ errors.password || "Field Required"}</p>
+              <p style={{ visibility: errors.password ? "visible" : "hidden" }}>
+                {errors.password || "Field Required"}
+              </p>
             </div>
             <div>
-              <label style={errors.confirmPass && {color:"red"}}>Confirm Password</label>
+              <label style={errors.confirmPass && { color: "red" }}>Confirm Password</label>
               <input
                 type="password"
                 placeholder="Enter Password"
                 name="confirmPassword"
-                style={ errors.confirmPass && {border:"1px solid red"}}
+                style={errors.confirmPass && { border: "1px solid red" }}
                 onChange={(e) => setConfirmPass(e.target.value)}
               />
-              <p style={{visibility : errors.confirmPass ? "visible" : "hidden"}}>{errors.confirmPass || "Field Required"}</p>
+              <p style={{ visibility: errors.confirmPass ? "visible" : "hidden" }}>
+                {errors.confirmPass || "Field Required"}
+              </p>
             </div>
             <div>
-              <button className={styles.loginButton} type="submit">
-                Sign Up
+              <button className={styles.loginButton} type="submit" disabled={loading}>
+                {loading ? "Loading..." : "Sign Up"}
               </button>
             </div>
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "15px",
-                fontWeight: "200",
-              }}
-            >
+            <div style={{ textAlign: "center", fontSize: "15px", fontWeight: "200" }}>
               OR
             </div>
             <div>
               <button className={styles.loginButton}>
                 <div>
-                    <FcGoogle size={30} />
+                  <FcGoogle size={30} />
                 </div>
-              Sign Up with google
+                Sign Up with Google
               </button>
             </div>
           </div>
           <div className={styles.register}>
             <p>
-              Alreday have an account?{" "}
-              <a onClick={() => navigate("/login")}>Login</a>
+              Already have an account? <a onClick={() => navigate("/login")}>Login</a>
             </p>
           </div>
         </form>
