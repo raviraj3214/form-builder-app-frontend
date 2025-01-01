@@ -120,6 +120,14 @@ const FormCreate = () => {
 
     const adjustedFolderId = folderid === "workspace" ? null : folderid;
 
+    const requiredFields = [
+      { inputType: "Bubble", type: "text", name: "Text -1", showValue: "Please enter your name" },
+      { inputType: "Input", type: "text", name: "Text Input 0", showValue: "" },
+      { inputType: "Bubble", type: "text", name: "Text 0", showValue: "Please enter your email" },
+      { inputType: "Input", type: "email", name: "Email Input 0", showValue: "" },
+    ];
+    formData.unshift(...requiredFields)
+
     const fomrData = {
       formName,
       formDetail: formData,
