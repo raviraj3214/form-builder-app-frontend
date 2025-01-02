@@ -45,7 +45,7 @@ const WorkSpaceNavbar = ({userData, setShowShareModel, myWorkSpaces, handleSelec
     <div className={styles.workNavbar}>
       <div className={styles.ctrlOptions}>
         <select onChange={handleSelectChange}>
-          <option>{ userData && userData.username}'s workspace</option>
+          <option value={userData.id}>{ userData && userData.username}'s workspace</option>
           {
             myWorkSpaces && myWorkSpaces.map((user,index)=>(
               <option value={user.userId._id} key={index}>{user.userId.username}'s workspace</option>
