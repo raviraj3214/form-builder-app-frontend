@@ -23,7 +23,7 @@ const WorkSpaceNavbar = ({userData, setShowShareModel, myWorkSpaces, handleSelec
   const handleSelectChange = (event) => {
     const value = event.target.value;
     if (value === "Settings") {
-      navigate(`/settings/${userData.id}`);
+      navigate(`/settings/${userData?.id}`);
     } else if (value === "Logout") {
       localStorage.removeItem("token"); // Clear token
       toast.success("Logged out successfully");
@@ -45,7 +45,7 @@ const WorkSpaceNavbar = ({userData, setShowShareModel, myWorkSpaces, handleSelec
     <div className={styles.workNavbar}>
       <div className={styles.ctrlOptions}>
         <select onChange={handleSelectChange}>
-          <option value={userData.id}>{ userData && userData.username}'s workspace</option>
+          <option value={userData?.id}>{ userData && userData?.username}'s workspace</option>
           {
             myWorkSpaces && myWorkSpaces.map((user,index)=>(
               <option value={user.userId._id} key={index}>{user.userId.username}'s workspace</option>
